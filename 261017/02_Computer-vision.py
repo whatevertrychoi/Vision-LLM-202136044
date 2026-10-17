@@ -5,7 +5,7 @@ ball_mask_final = cv2.morphologyEx(ball_mask_opened, cv2.MORPH_CLOSE, kernel, it
 
 # TODO: Binary mask로 외곽선 검출
 contours, _ = cv2.findContours(
-    ball_mask_closed,
+    ball_mask_final,
     cv2.RETR_EXTERNAL,
     cv2.CHAIN_APPROX_SIMPLE
 )
@@ -13,16 +13,21 @@ contours, _ = cv2.findContours(
 ball_img = basketball_enhanced_rgb.copy()
 
 if len(contours) > 0:
+    # 면적이 가장 큰 외곽선 선택
     largest_contour = max(contours, key=cv2.contourArea)
 
+    # 선택된 외관선 내부를 흰색(255)으로 채운 mask 생성
     ball_region = np.zeros_like(ball_mask_final)
     cv2.drawContours(ball_region, [largest_contour], -1, 255, thickness=cv2.FILLED)
 
+    # 공 영역을 초록색 채널에만 적용하여 원본 이미지에 반투명하게 오버레이
     mask_color = np.zeros_like(ball_img)
     mask_color[:, :, 1] = ball_region
     ball_img = cv2.addWeighted(ball_img, 1.0, mask_color, 0.35, 0)
+    #외관선을 초록색으로 표시
     cv2.drawContours(ball_img, [largest_contour], -1, (0,255,0), 2)
 
+# 결과 시각화 
 plt.figure(figsize=(16,8))
 plt.subplot(1,3,1), plt.imshow(mask_enhanced,cmap="gray"), plt.title("Enhanced Mask")
 plt.subplot(1,3,2), plt.imshow(ball_mask_final, cmap="gray"), plt.title("Mask (open x2, close x2)")
