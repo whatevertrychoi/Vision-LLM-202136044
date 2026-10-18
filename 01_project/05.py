@@ -11,14 +11,14 @@ from pathlib import Path
 # 1. 기본 설정
 # =====================================================
 
-WIDTH = 1280
-HEIGHT = 720
+WIDTH = 640
+HEIGHT = 480
 FPS = 30
 
 MODEL_PATH = "src/models/MediaPipe/hand_landmarker.task"
 
 # 공 관련 설정
-BALL_RADIUS = 45
+BALL_RADIUS = 55
 MIN_RADIUS = 15
 MAX_RADIUS = 145
 POP_RADIUS = 115
@@ -55,14 +55,11 @@ options = HandLandmarkerOptions(
 # =====================================================
 
 pipeline = (
-    "nvarguscamerasrc sensor-id=0 ! "
-    "video/x-raw(memory:NVMM), "
-    "width=1280, height=720, framerate=30/1 ! "
-    "nvvidconv ! "
-    "video/x-raw, format=BGRx ! "
-    "videoconvert ! "
-    "video/x-raw, format=BGR ! "
-    "queue leaky=downstream max-size-buffers=1 ! "
+    "v4l2src device=/dev/video0 ! "
+    "video/x-raw,format=YUY2,width=640,height=480,framerate=30/1 ! "
+    "videoconvert ! video/x-raw,format=BGR ! "
+    "queue leaky=downstream max-size-buffers=1 "
+    "max-size-bytes=0 max-size-time=0 ! "
     "appsink drop=true max-buffers=1 sync=false"
 )
 
@@ -748,7 +745,8 @@ try:
                 (255, 255, 255),
                 2
             )
-
+            cv2.namedWindow("AirBall AR", cv2.WINDOW_NORMAL)
+            cv2.resizeWindow("AirBall AR", 1280, 960)
             cv2.imshow("AirBall AR", frame)
 
             key = cv2.waitKey(1) & 0xFF
