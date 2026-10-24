@@ -1,4 +1,4 @@
-# 01_project
+# Project01
 
 가천대 온디바이스 AI 수업의 개인 프로젝트 폴더입니다. 아래 표에서 설명서를 클릭하면 각 프로젝트의 자세한 문서로 이동합니다.
 
@@ -16,10 +16,10 @@ cd ~/Documents/git/vision-LLM-<학번>
 if meidapipie 미설치시 -> Home/vision-llm 경로에서 시작 
 
 # AirBall Football (저장소 루트에서 실행 권장, 모델 파일 2개 필요)
-python3 01_project/06_02_jetson.py
+python3 Project01/06_02_jetson.py
 
 # Vision Quiz Lab (옵션 없이 USB 카메라로 바로 실행)
-cd 01_project
+cd Project01
 python3 06_03_jetson.py
 ```
 
