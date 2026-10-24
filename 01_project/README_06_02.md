@@ -1,4 +1,4 @@
-# AirBall Football (`06_02.py`)
+# AirBall Football (`06_02_jetson.py`)
 
 웹캠 앞에서 **손으로 공을 잡아 던지고, 발·무릎·머리·손바닥으로 공을 쳐올려 저글링**하는 2D 프로토타입입니다.
 MediaPipe의 손(Hand)과 몸(Pose) 랜드마크로 내 몸의 위치를 읽고, 공의 움직임(중력, 튕김, 충돌)은 직접 계산합니다.
@@ -365,8 +365,8 @@ python 01_project\06_02.py --video recordings\rec_20261023_193000.mp4
 ```text
 vision-LLM-<학번>/
 ├── 01_project/
-│   ├── 06_02.py                 <- 이 앱
-│   └── README_06_02.md          <- 이 문서
+│   ├── 06_02_jetson.py                 <- 이 앱
+│   └── README_06_02_jetson.md          <- 이 문서
 ├── src/models/MediaPipe/
 │   ├── hand_landmarker.task
 │   └── pose_landmarker_full.task
