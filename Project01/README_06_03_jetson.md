@@ -6,7 +6,7 @@ Jetson(Ubuntu)의 USB 카메라로 `python 06_03_jetson.py` 한 줄이면 실행
 - 정답을 고르면 화면이 0.5초 동안 서서히 맑아지고 해설이 나옵니다. 미션의 마지막 단계를 맞히면 태그가 `MISSION CLEAR` 로 바뀝니다.
 - 오답을 고르면 그 코드의 **잘못된 결과가 영상에 그대로** 보이고 이유가 나옵니다. 다시 고를 수 있습니다.
 - 수업 Computer Vision 단원(노트북 A~G, M)의 개념을 "읽는" 대신 "내 얼굴에 적용해서 눈으로 확인"하며 복습하려고 만들었습니다.
-- 퀴즈 안에서 AirBall(`05.py`, `06.py`)이 쓰는 MediaPipe 손 인식과 같은 개념(RGB 입력, 정규화 좌표, 관절 각도)도 다룹니다.
+- 퀴즈 안에서 AirBall(`05.py`, `06.py`)이 쓰는 MediaPipe 손 인01식과 같은 개념(RGB 입력, 정규화 좌표, 관절 각도)도 다룹니다.
 
 > 이 문서의 스크린샷은 실제 카메라가 아니라 `--demo` 가짜 영상으로 찍은 것입니다. 선명도 같은 숫자의 크기는 실제 카메라와 다릅니다.
 
@@ -35,11 +35,11 @@ Jetson의 **데스크톱 터미널**(모니터가 연결된 쪽)에서 실행합
 
 ```bash
 git pull
-cd ~/Documents/git/vision-LLM-<학번>/01_project     # 레포 폴더 이름은 본인 것/만약 mediapipe 미설치시 Home/vision-llm 실행
+cd ~/Documents/git/vision-LLM-<학번>/Project01     # 레포 폴더 이름은 본인 것/만약 mediapipe 미설치시 Home/vision-llm 실행
 python 06_03_jetson.py                                # 옵션 없이 바로 실행 (USB 카메라 /dev/video0)
 ```
 
-- 레포 루트에서 `python 01_project/06_03_jetson.py` 로 실행해도 됩니다. 손 모델은 현재 폴더, 이 파일이 있는 폴더, 그 한 단계 위(레포 루트)를 모두 찾고, 한글 폰트는 이 파일 옆과 시스템 폰트 폴더에서 찾기 때문입니다.
+- 레포 루트에서 `python Project01/06_03_jetson.py` 로 실행해도 됩니다. 손 모델은 현재 폴더, 이 파일이 있는 폴더, 그 한 단계 위(레포 루트)를 모두 찾고, 한글 폰트는 이 파일 옆과 시스템 폰트 폴더에서 찾기 때문입니다.
 - `python` 명령이 없는 환경이면 `python3 06_03_jetson.py` 로 실행하세요. `05.py` / `06.py` 를 돌리는 것과 같은 Python 환경(OpenCV가 설치된 쪽)을 쓰면 됩니다.
 - 시작하면 터미널에 아래와 같은 줄이 나옵니다 (창 배율 숫자는 화면 크기에 따라 다릅니다).
 
@@ -303,7 +303,7 @@ cap = cv2.VideoCapture(pipeline, cv2.CAP_GSTREAMER)
 ```bash
 python3 -c "import cv2; print(cv2.__version__)"
 python3 -c "import cv2, re; print(re.search(r'GStreamer:\s*\S+', cv2.getBuildInformation()).group(0))"   # GStreamer: YES 여야 함
-ls ../src/models/MediaPipe/hand_landmarker.task                                                          # 01_project 안에서
+ls ../src/models/MediaPipe/hand_landmarker.task                                                          # Project01 안에서
 fc-list :lang=ko | head -3                                                                               # 한글 폰트가 있는지
 ```
 
@@ -334,7 +334,7 @@ fc-list :lang=ko | head -3                                                      
 - 글자 넘침 검사: 모든 보기 코드, 이미 실행된 코드 줄, 해설 배너, 미션 완성 코드가 영역 안에 들어감 (OpenCV 4/5의 글자 폭 차이 포함).
 - `filter2D`, `KalmanFilter` 에 넘기는 행렬이 `np.float32` 배열이라 에러가 없음을 코드를 실제로 실행해 확인.
 - 카메라 열기: 파이프라인 문자열이 위 6장의 것과 글자 단위로 같고, `cv2.VideoCapture(pipeline, cv2.CAP_GSTREAMER)` 로 호출되는지 가짜 `VideoCapture` 로 확인.
-- 프레임 읽기 실패 후 복구 / 계속 실패 시 종료, `DISPLAY` 검사, `xrandr` 출력 파싱, 손 모델 경로 탐색(`01_project` 안 / 레포 루트 / 다른 폴더)을 시험.
+- 프레임 읽기 실패 후 복구 / 계속 실패 시 종료, `DISPLAY` 검사, `xrandr` 출력 파싱, 손 모델 경로 탐색(`Project01` 안 / 레포 루트 / 다른 폴더)을 시험.
 - 가상 화면(Xvfb)에서 실제 창을 띄워 문제 화면, 보기, 한글 글씨가 나오는 것을 확인.
 
 ### Jetson에서 직접 확인할 것
@@ -378,7 +378,7 @@ fc-list :lang=ko | head -3                                                      
 
 ```text
 vision-LLM-<학번>/
-├── 01_project/
+├── Project01/
 │   ├── 05.py
 │   ├── 06.py
 │   ├── 06_03_jetson.py          <- 이 앱
