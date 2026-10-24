@@ -35,7 +35,7 @@ Jetson의 **데스크톱 터미널**(모니터가 연결된 쪽)에서 실행합
 
 ```bash
 git pull
-cd ~/Documents/git/vision-LLM-<학번>/01_project     # 레포 폴더 이름은 본인 것
+cd ~/Documents/git/vision-LLM-<학번>/01_project     # 레포 폴더 이름은 본인 것/만약 mediapipe 미설치시 Home/vision-llm 실행
 python 06_03_jetson.py                                # 옵션 없이 바로 실행 (USB 카메라 /dev/video0)
 ```
 
