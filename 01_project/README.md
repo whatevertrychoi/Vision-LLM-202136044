@@ -13,6 +13,7 @@
 
 ```bash
 cd ~/Documents/git/vision-LLM-<학번>
+if meidapipie 미설치시 -> Home/vision-llm 경로에서 시작 
 
 # AirBall Football (저장소 루트에서 실행 권장, 모델 파일 2개 필요)
 python3 01_project/06_02.py
