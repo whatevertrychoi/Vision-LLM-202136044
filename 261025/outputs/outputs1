@@ -1,0 +1,16 @@
+========== Result Check ==========
+Vertical   - same: True, max difference: 0.00000015
+Horizontal - same: True, max difference: 0.00000024
+
+========== NumPy CPU ==========
+Processing time: 34.6289 seconds
+
+========== CuPy GPU ==========
+CPU to GPU: 0.0038 seconds
+GPU processing: 0.0298 seconds
+GPU to CPU: 0.0026 seconds
+Total GPU time: 0.0362 seconds
+
+========== Comparison ==========
+Compute-only speedup: 1163.37x
+Including transfers: 956.32x

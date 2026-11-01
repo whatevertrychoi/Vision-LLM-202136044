@@ -1,0 +1,6 @@
+Epoch 1/5 | Train loss: 1.5385 | Train accuracy: 40.53% | Test loss: 0.0551 | Test accuracy: 44.54% | Time: 26.31s
+Epoch 2/5 | Train loss: 1.1585 | Train accuracy: 53.35% | Test loss: 0.0551 | Test accuracy: 58.76% | Time: 23.09s
+Epoch 3/5 | Train loss: 1.2768 | Train accuracy: 59.95% | Test loss: 0.0551 | Test accuracy: 50.39% | Time: 23.43s
+Epoch 4/5 | Train loss: 1.0156 | Train accuracy: 65.51% | Test loss: 0.0551 | Test accuracy: 62.19% | Time: 23.45s
+Epoch 5/5 | Train loss: 0.8967 | Train accuracy: 69.15% | Test loss: 0.0551 | Test accuracy: 67.22% | Time: 22.96s
+Total GPU training time: 706.39s
