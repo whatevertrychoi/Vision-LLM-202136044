@@ -1,2 +1,5 @@
 src/models/**
+whisper.cpp/
+src/datasets/calibration/
 .env
+src/datasets/**
