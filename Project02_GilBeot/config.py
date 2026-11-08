@@ -13,7 +13,7 @@ from pathlib import Path
 # ──────────────────────────────────────────────────────────────
 # 1. 기본 경로
 # ──────────────────────────────────────────────────────────────
-PROJECT_DIR = Path(__file__).resolve().parent              # .../Project02
+PROJECT_DIR = Path(__file__).resolve().parent              # .../Project02_GilBeot
 REPO_DIR = PROJECT_DIR.parent                              # .../Vision-LLM-202136044
 VISION_LLM_HOME = Path(os.environ.get("VISION_LLM_HOME", Path.home() / "vision-llm"))
 
@@ -94,9 +94,14 @@ def _pick(cmd, prefer, avoid=()):
     return None
 
 
-# 스피커: USB 재생 장치 우선 (HDMI·Jetson 내부 APE 제외). 없으면 None → aplay 기본 장치
-SPEAKER_DEVICE = os.environ.get("GILBEOT_SPEAKER") or _pick(
-    "aplay", prefer=("usb",), avoid=("hdmi", "ape", "tegra"))
+# 스피커: 06 노트북과 동일하게 기본은 장치 지정 없이 `aplay 파일` (PulseAudio 기본 출력 장치 사용)
+#   → 출력 장치는 Ubuntu 설정 > 소리 > 출력 장치에서 선택
+#   특정 장치로 강제하려면: export GILBEOT_SPEAKER=plughw:0,0  (또는 auto = USB 장치 자동 탐지)
+_spk = os.environ.get("GILBEOT_SPEAKER", "").strip()
+if _spk.lower() == "auto":
+    SPEAKER_DEVICE = _pick("aplay", prefer=("usb",), avoid=("hdmi", "ape", "tegra"))
+else:
+    SPEAKER_DEVICE = _spk or None
 # 마이크: 이름에 Microphone 이 있는 장치 우선 → 없으면 USB 녹음 장치 → 없으면 수업 기본값
 MIC_DEVICE = (os.environ.get("GILBEOT_MIC")
               or _pick("arecord", prefer=("microphone",))
