@@ -185,13 +185,17 @@ class App:
         # ── 준비 단계 ──
         self.speaker.prerender()        # 고정 경고 문구 19개를 wav로 미리 생성 (재생 지연 제거)
         self.speaker.start()            # 스피커 전담 스레드 시작
-        self.assistant.load_async()     # Gemma는 뒤에서 로드 → 카메라는 바로 시작
 
         ok, frame = self.camera.read()
         if not ok:
             raise RuntimeError("첫 프레임을 읽지 못했습니다.")
         print("[App] YOLO warm-up...")
         self.detector.warmup(frame)     # TensorRT 첫 추론은 느리므로 미리 한 번
+        print("[App] YOLO ready")
+        # Gemma 로드는 YOLO(TensorRT) 준비가 끝난 '뒤에' 시작한다.
+        # Orin Nano는 CPU·GPU가 메모리 8GB를 공유하므로, 두 모델이 동시에 GPU 메모리를 잡으면
+        # 시스템이 멈출 수 있다. 순서를 나누면 경고 기능은 바로 동작하고 Gemma는 뒤에서 준비된다.
+        self.assistant.load_async()
         self.speaker.say_key("start")   # "보행 안내를 시작합니다."
         if self.args.find:
             self.start_find(self.args.find)
