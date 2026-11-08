@@ -13,7 +13,7 @@ from pathlib import Path
 # ──────────────────────────────────────────────────────────────
 # 1. 기본 경로
 # ──────────────────────────────────────────────────────────────
-PROJECT_DIR = Path(__file__).resolve().parent              # .../Project02_GilBeot
+PROJECT_DIR = Path(__file__).resolve().parent              # .../Project02
 REPO_DIR = PROJECT_DIR.parent                              # .../Vision-LLM-202136044
 VISION_LLM_HOME = Path(os.environ.get("VISION_LLM_HOME", Path.home() / "vision-llm"))
 
@@ -57,10 +57,51 @@ PIPER_PYTHON = VISION_LLM_HOME / ".piper_venv/bin/python"
 PIPER_MODEL = VISION_LLM_HOME / "src/models/Piper/ko_KR-kss-medium.onnx"
 
 # ──────────────────────────────────────────────────────────────
-# 3. 오디오 장치  (Jetson에서 `arecord -l`, `aplay -l` 로 확인 후 수정)
+# 3. 오디오 장치 (자동 탐지)
+#    카드 번호는 USB를 다시 꽂거나 재부팅하면 바뀔 수 있으므로
+#    `aplay -l` / `arecord -l` 의 장치 '이름'으로 USB 스피커·마이크를 찾는다.
+#    수동 지정: export GILBEOT_SPEAKER=plughw:0,0   export GILBEOT_MIC=plughw:3,0
 # ──────────────────────────────────────────────────────────────
-MIC_DEVICE = os.environ.get("GILBEOT_MIC", "plughw:3,0")
-SPEAKER_DEVICE = os.environ.get("GILBEOT_SPEAKER")           # None 이면 aplay 기본 장치
+import re as _re
+import shutil as _shutil
+import subprocess as _subprocess
+
+
+def _list_cards(cmd):
+    """aplay -l / arecord -l 출력 → [(card, device, 이름 전체 줄)]"""
+    if not _shutil.which(cmd):
+        return []
+    try:
+        out = _subprocess.run([cmd, "-l"], text=True, capture_output=True, timeout=3).stdout
+    except Exception:
+        return []
+    cards = []
+    for line in out.splitlines():
+        m = _re.match(r"card (\d+): .*?, device (\d+):", line)
+        if m:
+            cards.append((int(m.group(1)), int(m.group(2)), line))
+    return cards
+
+
+def _pick(cmd, prefer, avoid=()):
+    """이름에 prefer 단어가 들어간 첫 장치. avoid 단어가 있으면 제외."""
+    for card, dev, line in _list_cards(cmd):
+        low = line.lower()
+        if any(a in low for a in avoid):
+            continue
+        if any(p in low for p in prefer):
+            return f"plughw:{card},{dev}"
+    return None
+
+
+# 스피커: USB 재생 장치 우선 (HDMI·Jetson 내부 APE 제외). 없으면 None → aplay 기본 장치
+SPEAKER_DEVICE = os.environ.get("GILBEOT_SPEAKER") or _pick(
+    "aplay", prefer=("usb",), avoid=("hdmi", "ape", "tegra"))
+# 마이크: 이름에 Microphone 이 있는 장치 우선 → 없으면 USB 녹음 장치 → 없으면 수업 기본값
+MIC_DEVICE = (os.environ.get("GILBEOT_MIC")
+              or _pick("arecord", prefer=("microphone",))
+              or _pick("arecord", prefer=("usb",), avoid=("ape", "tegra"))
+              or "plughw:3,0")
 RECORD_SECONDS = 4
 
 # ──────────────────────────────────────────────────────────────

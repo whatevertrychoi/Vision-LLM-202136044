@@ -39,7 +39,8 @@ class Speaker:
         if self.backend == "console":
             print("[Speaker] Piper/aplay 없음 → 콘솔 출력 모드 (노트북 테스트용)")
         else:
-            print(f"[Speaker] Piper TTS: {config.PIPER_MODEL.name}")
+            print(f"[Speaker] Piper TTS: {config.PIPER_MODEL.name}, "
+                  f"speaker: {config.SPEAKER_DEVICE or 'aplay 기본 장치'}")
 
         self._heap = []
         self._seq = itertools.count()
@@ -170,9 +171,14 @@ class Speaker:
         with self._cv:
             if self._preempt.is_set():
                 return False
-            self._proc = subprocess.Popen(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        self._proc.wait()
-        return not self._preempt.is_set()
+            self._proc = subprocess.Popen(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, text=True)
+        _, err = self._proc.communicate()
+        if self._preempt.is_set():
+            return False
+        if self._proc.returncode != 0:
+            # 선점이 아닌데 실패 → 장치/경로 문제. 에러를 그대로 보여준다.
+            print(f"[Speaker] '{cmd[0]}' 실패 (code {self._proc.returncode}): {(err or '').strip()[:300]}")
+        return True
 
     def _play(self, item):
         text = item["text"]
@@ -205,6 +211,9 @@ class Speaker:
         if config.SPEAKER_DEVICE:
             cmd += ["-D", config.SPEAKER_DEVICE]
         cmd.append(str(wav))
+        if not wav.exists():
+            print(f"[Speaker] 음성 파일이 없습니다: {wav}")
+            return
         if not self._run(cmd):
             print("[TTS] ...(재생 중 중단됨: 더 급한 경고)")
 
