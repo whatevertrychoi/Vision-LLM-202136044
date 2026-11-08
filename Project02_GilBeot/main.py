@@ -31,6 +31,7 @@ GilBeot (길벗) - 시각·청각장애인 보행 보조 Vision-LLM 시스템
 
 실행 예
   시연    : python main.py --simple             (전방 사람 → "전방에 사람이 있으니 주의하세요")
+  화면    : python main.py --scale 1.5          (카메라 창 배율, 기본 2.0 = 200%)
   Jetson  : python main.py                      (USB 카메라 v4l2src, 전체 기능)
   Jetson  : python main.py --source v4l2:1      (/dev/video1)
   Jetson  : python main.py --no-llm             (경고만, 메모리 절약)
@@ -71,6 +72,8 @@ def parse_args():
     p.add_argument("--find", default=None, help="시작하자마자 물건 찾기 (예: --find 컵) — 테스트용")
     p.add_argument("--mute", action="store_true", help="음성 출력 끄기")
     p.add_argument("--headless", action="store_true", help="화면 출력 없이 실행")
+    p.add_argument("--scale", type=float, default=2.0,
+                   help="카메라 화면 표시 배율 (기본 2.0 = 200%%, 1.0 = 원본 640x480)")
     p.add_argument("--save-json-sec", type=float, default=1.0,
                    help="장면 JSON 저장 주기(초), 0이면 저장 안 함")
     return p.parse_args()
@@ -272,7 +275,12 @@ class App:
                 if self.args.headless:
                     continue
                 status = self.status or ("MUTED" if self.speaker.muted else "")
-                cv2.imshow("GilBeot", draw(frame, scene, active, fps, status, self.finder))
+                view = draw(frame, scene, active, fps, status, self.finder)
+                if self.args.scale != 1.0:
+                    # 표시용으로만 확대 (YOLO·판단은 원본 해상도 그대로) — 640x480 → 1280x960
+                    view = cv2.resize(view, None, fx=self.args.scale, fy=self.args.scale,
+                                      interpolation=cv2.INTER_LINEAR)
+                cv2.imshow("GilBeot", view)
                 key = cv2.waitKey(1) & 0xFF
                 if key == ord("q"):
                     break
